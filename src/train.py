@@ -8,22 +8,15 @@ from xgboost import XGBClassifier
 
 def main():
     print("Loading data...")
-    # 1. Load data
+
     df = pd.read_csv('data/cleaned.csv')
     
-    # Filter to only CONFIRMED and FALSE POSITIVE
     df = df[df['koi_disposition'].isin(['CONFIRMED', 'FALSE POSITIVE'])].copy()
     
-    # Target: 1 for CONFIRMED, 0 for FALSE POSITIVE
     df['target'] = (df['koi_disposition'] == 'CONFIRMED').astype(int)
     X = df.drop(columns=['koi_disposition', 'target'])
     X = X.select_dtypes(include=[np.number])
     y = df['target']
-    
-    # Handle any missing values in features if they still exist (XGBoost handles NaNs naturally, but good practice)
-    # We will just let XGBoost handle them internally.
-    
-    # 2. Stratified 80/20 train/test split
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, stratify=y, random_state=42
     )

@@ -9,12 +9,9 @@ OUTPUT_FILE = "data/cumulative.csv"
 def download_data():
     print(f"Downloading data from NASA Exoplanet Archive...")
     try:
-        # We use stream=True for potentially large files, but this CSV isn't too massive.
-        # Still, downloading in chunks is good practice.
         response = requests.get(URL, stream=True, timeout=60)
         response.raise_for_status()
         
-        # Ensure data directory exists
         os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
         
         with open(OUTPUT_FILE, 'wb') as f:
@@ -22,8 +19,7 @@ def download_data():
                 f.write(chunk)
                 
         print(f"Data successfully downloaded to {OUTPUT_FILE}")
-        
-        # Verify and print shape
+
         df = pd.read_csv(OUTPUT_FILE)
         print(f"Dataset successfully loaded.")
         print(f"Row count: {df.shape[0]}")

@@ -5,7 +5,6 @@ from sklearn.model_selection import train_test_split
 
 def main():
     print("Loading test data...")
-    # Recreate the exact same test split from training
     df = pd.read_csv('data/cleaned.csv')
     df = df[df['koi_disposition'].isin(['CONFIRMED', 'FALSE POSITIVE'])].copy()
     df['target'] = (df['koi_disposition'] == 'CONFIRMED').astype(int)
@@ -18,19 +17,16 @@ def main():
         X, y, test_size=0.2, stratify=y, random_state=42
     )
     
-    # Pick a handful of test rows
     sample_X = X_test.head(10)
     sample_y = y_test.head(10)
     
-    # Load the trained model
     print("Loading model from models/xgb_model.pkl...")
     with open('models/xgb_model.pkl', 'rb') as f:
         model = pickle.load(f)
         
-    # Run predictions
     print("\n--- Predictions on 10 Held-Out Samples ---")
     predictions = model.predict(sample_X)
-    probabilities = model.predict_proba(sample_X)[:, 1] # Probability of class 1 (CONFIRMED)
+    probabilities = model.predict_proba(sample_X)[:, 1]
     
     label_map = {1: 'CONFIRMED', 0: 'FALSE POSITIVE'}
     
